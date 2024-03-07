@@ -1,9 +1,16 @@
 {
   "name": "@textbook/atlas-ip",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Permit IPs to access MongoDB Atlas",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["lib/"],
+  "engines": {
+    "node": "^20.9"
+  },
   "scripts": {
+    "build": "tsc --project tsconfig.build.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

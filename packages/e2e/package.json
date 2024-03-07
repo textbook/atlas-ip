@@ -1,0 +1,16 @@
+{
+  "name": "e2e",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "devDependencies": {
+    "mongodb": "^6.4.0"
+  },
+  "scripts": {
+    "e2e": "node --import ../../tsNode.js --test *.test.ts"
+  },
+  "keywords": [],
+  "author": "Jonathan Sharpe <mail@jonrshar.pe>",
+  "license": "ISC"
+}

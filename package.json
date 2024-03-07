@@ -2,14 +2,26 @@
   "name": "atlas-ip",
   "version": "0.1.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
+    "build": "npm --if-present --workspaces run build",
+    "pree2e": "npm run build",
+    "e2e": "npm --workspace packages/e2e run e2e",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Jonathan Sharpe <mail@jonrshar.pe>",
   "license": "ISC",
   "workspaces": [
-    "packages/atlas-ip"
-  ]
+    "packages/atlas-ip",
+    "packages/e2e"
+  ],
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.2",
+    "@types/node": "^20.11.25",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
+  }
 }
