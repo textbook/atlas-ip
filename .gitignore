@@ -1,3 +1,7 @@
 lib/
 node_modules/
+packages/action/main/
+packages/action/post/
+packages/atlas-ip/LICENSE
+packages/atlas-ip/README.md
 *.env
