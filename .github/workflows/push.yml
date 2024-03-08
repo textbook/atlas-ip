@@ -1,0 +1,51 @@
+---
+name: Build and publish the action
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: action
+          path: |
+            packages/action/main/**
+            packages/action/post/**
+            packages/action/action.yml
+            packages/action/package.json
+            packages/action/README.md
+  deploy:
+    needs: [ test ]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v1
+      - run: rm -rf *
+      - uses: actions/download-artifact@v4
+        with:
+          name: action
+      - run: |
+          git add .
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo 'No changes to commit'
+            exit 0
+          fi
+          git config --global user.name 'gh-actions'
+          git config --global user.email 'actions@github.com'
+          git commit --message 'Update atlas-ip action'
+          git push

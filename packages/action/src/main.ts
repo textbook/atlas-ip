@@ -5,7 +5,7 @@ import Atlas from "@textbook/atlas-ip";
 import { getCredentials, getIp, logger } from "./utils.js";
 
 const groupId = getInput("group-id", { required: true });
-const workflow = `${context.repo.owner}/${context.repo.repo} - ${context.workflow} - ${context.runId}`;
+const workflow = `${context.repo.owner}/${context.repo.repo} - ${context.job} - ${context.runId}`;
 
 const ipAddress = await getIp();
 setOutput("ip-address", ipAddress);
