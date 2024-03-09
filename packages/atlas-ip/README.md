@@ -15,7 +15,7 @@ import Atlas from "@textbook/atlas-ip";
 
 // set up required configuration
 
-const atlas = await Atlas.create({ publicKey, privateKey })
+const atlas = Atlas.create({ publicKey, privateKey })
 await atlas.permit(groupId, ipAddress, comment);
 
 // do work with MongoDB connection
