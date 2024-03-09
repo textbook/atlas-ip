@@ -107,3 +107,8 @@ jobs:
         working-directory: ./packages/e2e
       - run: npm run e2e
         working-directory: ./packages/e2e
+        env:
+          ATLAS_GROUP_ID: ${{ secrets.ATLAS_GROUP_ID }}
+          ATLAS_PRIVATE_KEY: ${{ secrets.ATLAS_PRIVATE_KEY }}
+          ATLAS_PUBLIC_KEY: ${{ secrets.ATLAS_PUBLIC_KEY }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
