@@ -36,33 +36,34 @@ describe("@textbook/atlas-ip", () => {
 	});
 
 	afterEach(async () => {
-		for (const client of clients) {
-			await client.close(true);
-		}
+		logger.debug("closing %d clients", clients.length);
+		await Promise.all(clients.map((client) => client.close(true)));
 	});
 
-	it("can permit and revoke IP access", { timeout: 60_000 }, async () => {
-		/** @type {MongoClient} */
-		let client;
+	it("can permit and revoke IP access", { timeout: 120_000 }, async () => {
 		const atlas = Atlas.create(credentials, logger);
 		const groupId = process.env.ATLAS_GROUP_ID;
 		const ipAddress = await getIp();
 
-		client = new MongoClient(connectionString, clientOptions);
-		clients.push(client);
-		await assert.rejects(client.connect(), "should initially fail to connect");
+		await waitForResolution(() => {
+			const client = new MongoClient(connectionString, clientOptions);
+			clients.push(client);
+			return assert.rejects(client.connect(), "should initially fail to connect");
+		});
 
 		await atlas.permit(groupId, ipAddress, `E2E testing @ ${new Date().toISOString()}`);
-		await waitFor(15_000);
-		client = new MongoClient(connectionString, clientOptions);
-		clients.push(client);
-		await client.connect();
+		await waitForResolution(() => {
+			const client = new MongoClient(connectionString, clientOptions);
+			clients.push(client);
+			return client.connect();
+		});
 
 		await atlas.revoke(groupId, ipAddress);
-		await waitFor(20_000);
-		client = new MongoClient(connectionString, clientOptions);
-		clients.push(client);
-		await assert.rejects(client.connect(), "should subsequently fail to connect");
+		await waitForResolution(() => {
+			const client = new MongoClient(connectionString, clientOptions);
+			clients.push(client);
+			return assert.rejects(client.connect(), "should subsequently fail to connect");
+		});
 	});
 });
 
@@ -94,4 +95,20 @@ async function waitFor(ms) {
 	await new Promise((resolve) => {
 		setTimeout(resolve, ms);
 	});
+}
+
+/**
+ * Repeat until the factory returns a promise that resolves.
+ * @param {() => Promise<unknown>} factory
+ * @returns {Promise<void>}
+ */
+async function waitForResolution(factory) {
+	let delay = 500;
+	const loop = () => factory().catch(async () => {
+		logger.debug("waiting %dms", delay);
+		await waitFor(delay);
+		delay *= 2;
+		await loop();
+	});
+	await loop();
 }
