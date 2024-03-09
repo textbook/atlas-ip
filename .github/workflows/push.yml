@@ -100,6 +100,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm --include-workspace-root --workspace packages/e2e ci
-      - run: npm --workspace packages/e2e install --no-save @textbook/atlas-ip
-      - run: npm --workspace packages/e2e run e2e
+      - run: rm package*.json
+      - run: npm --no-package-lock install
+        working-directory: ./packages/e2e
+      - run: npm --no-package-lock install --no-save @textbook/atlas-ip
+        working-directory: ./packages/e2e
+      - run: npm run e2e
+        working-directory: ./packages/e2e
