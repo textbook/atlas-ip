@@ -1,6 +1,6 @@
 {
   "name": "@textbook/atlas-ip",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Permit IPs to access MongoDB Atlas",
   "publishConfig": {
     "access": "public",
@@ -10,7 +10,9 @@
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": ["lib/"],
+  "files": [
+    "lib/"
+  ],
   "engines": {
     "node": "^20.9"
   },
