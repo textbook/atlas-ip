@@ -28875,12 +28875,13 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 
 
+const defaultComment = `${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.owner}/${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.repo} - ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.job} - ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.runId}`;
 const groupId = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("group-id", { required: true });
-const workflow = `${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.owner}/${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.repo} - ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.job} - ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.runId}`;
+const comment = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)("comment") || defaultComment;
 const ipAddress = await (0,_utils_js__WEBPACK_IMPORTED_MODULE_3__/* .getIp */ .PB)();
 (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput)("ip-address", ipAddress);
 await _textbook_atlas_ip__WEBPACK_IMPORTED_MODULE_2__/* ["default"].create */ .Z.create((0,_utils_js__WEBPACK_IMPORTED_MODULE_3__/* .getCredentials */ .UR)(), _utils_js__WEBPACK_IMPORTED_MODULE_3__/* .logger */ .kg)
-    .permit(groupId, ipAddress, workflow);
+    .permit(groupId, ipAddress, comment);
 (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.saveState)("permitted-ip", ipAddress);
 
 __webpack_async_result__();
