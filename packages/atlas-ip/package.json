@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
-    "postbuild": "cpy ../../LICENSE ../../README.md packages/atlas-ip",
+    "postbuild": "cpy ../../LICENSE packages/atlas-ip",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

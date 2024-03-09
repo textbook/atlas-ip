@@ -31,6 +31,7 @@ jobs:
             packages/action/main/**
             packages/action/post/**
             packages/action/action.yml
+            packages/action/LICENSE
             packages/action/package.json
             packages/action/README.md
   deploy:

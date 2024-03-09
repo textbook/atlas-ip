@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "npm run build:main && npm run build:post",
+    "postbuild": "cpy ../../LICENSE packages/action",
     "build:main": "npm run compile -- --out main src/main.ts",
     "build:post": "npm run compile -- --out post src/post.ts",
     "compile": "ncc build --license license.txt"
