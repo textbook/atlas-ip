@@ -2,6 +2,12 @@
 
 Permit IPs to access MongoDB Atlas.
 
+## Installation
+
+```shell
+$ npm install @textbook/atlas-ip
+```
+
 ## Usage
 
 ```javascript
