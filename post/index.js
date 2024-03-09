@@ -24652,6 +24652,7 @@ async function getIp() {
     const body = await res.text();
     return body.trim();
 }
+/* eslint-disable @typescript-eslint/no-unsafe-argument -- spread of _array_ of any is safe */
 const logger = {
     debug(message, ...optionalParams) {
         if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.isDebug)()) {
@@ -24666,7 +24667,7 @@ const logger = {
     },
     warn(message, ...optionalParams) {
         (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.warning)((0,node_util__WEBPACK_IMPORTED_MODULE_0__.format)(message, ...optionalParams));
-    }
+    },
 };
 
 
@@ -26508,8 +26509,8 @@ class DigestedClient {
         this.logger = logger;
     }
     async fetch(input, init) {
-        const headers = input.headers ?? new Headers(init?.headers);
-        const method = input.method ?? init?.method?.toUpperCase() ?? "GET";
+        const headers = new Headers(init?.headers);
+        const method = init?.method?.toUpperCase() ?? (input instanceof Request ? input.method : "GET");
         const url = this.getUrl(input);
         this.logger.debug("making %s request to %s", method, url);
         let res = await fetch(input, { ...init, headers });
@@ -26527,7 +26528,7 @@ class DigestedClient {
         if (!wwwAuth.startsWith(DigestedClient.DIGEST_PREFIX)) {
             throw new Error("invalid WWW-Authenticate header");
         }
-        const { algorithm, domain, nonce, qop, realm } = this.extractParts(wwwAuth);
+        const { algorithm, nonce, qop, realm } = this.extractParts(wwwAuth);
         if (algorithm !== "MD5") {
             throw new Error(`unsupported algorithm ${algorithm}`);
         }
@@ -26604,7 +26605,7 @@ class Atlas {
         });
         if (!res.ok) {
             const body = await res.json();
-            const message = body?.detail ?? res.statusText;
+            const message = getStringProperty(body, "detail") ?? res.statusText;
             this.logger.error(message);
             throw new Error(message);
         }
@@ -26619,7 +26620,7 @@ class Atlas {
         });
         if (!res.ok) {
             const body = await res.json();
-            const message = body?.detail ?? res.statusText;
+            const message = getStringProperty(body, "detail") ?? res.statusText;
             this.logger.error(message);
             throw new Error(message);
         }
@@ -26629,6 +26630,12 @@ class Atlas {
         datetime.setHours(datetime.getHours() + 6);
         return datetime;
     }
+}
+function getStringProperty(obj, name) {
+    if (typeof obj === "object" && obj !== null && name in obj && typeof obj[name] === "string") {
+        return obj[name];
+    }
+    return null;
 }
 
 
