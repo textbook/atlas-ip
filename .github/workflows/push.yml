@@ -24,6 +24,13 @@ jobs:
           ATLAS_PRIVATE_KEY: ${{ secrets.ATLAS_PRIVATE_KEY }}
           ATLAS_PUBLIC_KEY: ${{ secrets.ATLAS_PUBLIC_KEY }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
+      - run: npm --workspace packages/atlas-ip pack
+      - uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: package
+          path:
+            textbook-*.tgz
       - run: cp -r .github packages/action/
       - uses: actions/upload-artifact@v4
         with:
