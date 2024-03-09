@@ -87,7 +87,18 @@ jobs:
       - run: npm publish --provenance textbook-atlas-ip-*.tgz
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-  smoke:
+  smoke-github:
     needs: [ deploy-github ]
     uses: ./.github/workflows/test.yml
     secrets: inherit
+  smoke-npm:
+    needs: [ deploy-npm ]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm --include-workspace-root --workspace packages/e2e ci
+      - run: npm --workspace packages/e2e install --no-save @textbook/atlas-ip
+      - run: npm --workspace packages/e2e run e2e
