@@ -1,0 +1,39 @@
+---
+name: Test the action
+
+on:
+  push:
+    branches: [ v1 ]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ macos-13, ubuntu-22.04, windows-2022 ]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: textbook/atlas-ip@v1
+        with:
+          atlas-private-key: ${{ secrets.ATLAS_PRIVATE_KEY }}
+          atlas-public-key: ${{ secrets.ATLAS_PUBLIC_KEY }}
+          group-id: ${{ secrets.ATLAS_GROUP_ID }}
+      - name: Install mongosh on macOS
+        if: startsWith(matrix.os, 'macos')
+        run: brew install mongosh
+      - name: Install mongosh on Ubuntu
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc
+          echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-mongosh-shared-openssl3
+          mongosh --version
+      - name: Install mongosh on Windows
+        if: startsWith(matrix.os, 'windows')
+        run: choco install mongodb-shell
+      - name: Test connection
+        shell: bash
+        run: |
+          mongosh --eval 'db.getCollectionNames()' "$MONGO_URL"
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
