@@ -10,6 +10,9 @@ inputs:
   atlas-private-key:
     description: 'Corresponding private key'
     required: true
+  comment:
+    description: 'Description comment to show in the admin panel'
+    required: false
   group-id:
     description: 'Unique 24-hexadecimal digit string that identifies the project'
     required: true

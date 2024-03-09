@@ -17,6 +17,7 @@ jobs:
         with:
           atlas-private-key: ${{ secrets.ATLAS_PRIVATE_KEY }}
           atlas-public-key: ${{ secrets.ATLAS_PUBLIC_KEY }}
+          comment: ${{ github.repository }} - ${{ github.job }} - ${{ github.run_id }} - ${{ matrix.os }}
           group-id: ${{ secrets.ATLAS_GROUP_ID }}
       - name: Install mongosh on macOS
         if: startsWith(matrix.os, 'macos')

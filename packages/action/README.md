@@ -15,8 +15,10 @@ Permit GitHub Actions runners to access MongoDB Atlas.
 
 ### Inputs
 
-- `atlas-public-key`: API public key
+- `atlas-public-key`: API public key (must have Project Owner [role](https://www.mongodb.com/docs/atlas/reference/user-roles/#project-roles))
 - `atlas-private-key`: Corresponding private key
+- `comment` _(optional)_: Description comment to show in the admin panel
+    - Defaults to `{owner}/{repo} - {job} - {runId}`
 - `group-id`: Unique 24-hexadecimal digit string that identifies the project
 
 ### Outputs
