@@ -13,8 +13,17 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/textbook/atlas-ip.git"
+  },
   "author": "Jonathan Sharpe <mail@jonrshar.pe>",
+  "funding": "https://ko-fi.com/textbook",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/textbook/atlas-ip/issues"
+  },
+  "homepage": "https://github.com/textbook/atlas-ip#readme",
   "workspaces": [
     "packages/atlas-ip",
     "packages/e2e",
