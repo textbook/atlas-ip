@@ -2,19 +2,25 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { format } from "node:util";
 
-import Atlas, { type Credentials, type Logger } from "@textbook/atlas-ip";
+import Atlas from "@textbook/atlas-ip";
 import "dotenv/config";
-import { MongoClient, MongoClientOptions } from "mongodb";
+import { MongoClient } from "mongodb";
 
-const connectionString = process.env.MONGO_URL!;
-const clientOptions: MongoClientOptions = {
+const connectionString = process.env.MONGO_URL;
+
+/** @type {import("mongodb").MongoClientOptions} */
+const clientOptions = {
 	serverSelectionTimeoutMS: 5_000,
 };
-const credentials: Credentials = {
-	publicKey: process.env.ATLAS_PUBLIC_KEY!,
-	privateKey: process.env.ATLAS_PRIVATE_KEY!,
+
+/** @type {import("@textbook/atlas-ip").Credentials} */
+const credentials = {
+	publicKey: process.env.ATLAS_PUBLIC_KEY,
+	privateKey: process.env.ATLAS_PRIVATE_KEY,
 };
-const logger: Logger = {
+
+/** @type {import("@textbook/atlas-ip").Logger} */
+const logger = {
 	debug: pretty("debug"),
 	error: pretty("error"),
 	info: pretty("info"),
@@ -22,7 +28,8 @@ const logger: Logger = {
 };
 
 describe("@textbook/atlas-ip", () => {
-	let clients: MongoClient[];
+	/** @type {MongoClient[]} */
+	let clients;
 
 	beforeEach(() => {
 		clients = [];
@@ -35,9 +42,10 @@ describe("@textbook/atlas-ip", () => {
 	});
 
 	it("can permit and revoke IP access", { timeout: 60_000 }, async () => {
-		let client: MongoClient;
+		/** @type {MongoClient} */
+		let client;
 		const atlas = Atlas.create(credentials, logger);
-		const groupId = process.env.ATLAS_GROUP_ID!;
+		const groupId = process.env.ATLAS_GROUP_ID;
 		const ipAddress = await getIp();
 
 		client = new MongoClient(connectionString, clientOptions);
@@ -58,19 +66,31 @@ describe("@textbook/atlas-ip", () => {
 	});
 });
 
-function pretty(level: string) {
-	return (...args: unknown[]): void => {
+/**
+ * @param {string} level
+ * @returns {(...args: unknown[]) => void}
+ */
+function pretty(level) {
+	return (...args) => {
 		console.log("%s : %s", level.padStart(5, " "), format(...args));
 	};
 }
 
-async function getIp(): Promise<string> {
+/**
+ * @returns {Promise<string>} - the current IP
+ */
+async function getIp() {
 	const res = await fetch("https://checkip.amazonaws.com");
 	const body = await res.text();
 	return body.trim();
 }
 
-async function waitFor(ms: number): Promise<void> {
+/**
+ * Create a promise that resolves after a timeout
+ * @param {number} ms - number of milliseconds to wait
+ * @returns {Promise<void>}
+ */
+async function waitFor(ms) {
 	await new Promise((resolve) => {
 		setTimeout(resolve, ms);
 	});

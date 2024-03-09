@@ -5,6 +5,9 @@
     "main/",
     "post/"
   ],
+  "env": {
+    "node": true
+  },
   "overrides": [
     {
       "files": ["**/*.ts"],

@@ -8,7 +8,7 @@
     "mongodb": "^6.4.0"
   },
   "scripts": {
-    "e2e": "node --import ../../tsNode.js --test *.test.ts"
+    "e2e": "node --test"
   },
   "keywords": [],
   "author": "Jonathan Sharpe <mail@jonrshar.pe>",
