@@ -2,6 +2,11 @@
   "name": "@textbook/atlas-ip",
   "version": "0.1.0",
   "description": "Permit IPs to access MongoDB Atlas",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "private": false,
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
