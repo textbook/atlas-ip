@@ -21,9 +21,7 @@ jobs:
           group-id: ${{ secrets.ATLAS_GROUP_ID }}
       - name: Install mongosh on macOS
         if: startsWith(matrix.os, 'macos')
-        run: |
-          brew install openssl@3
-          brew install mongosh
+        run: brew install mongosh
       - name: Install mongosh on Ubuntu
         if: startsWith(matrix.os, 'ubuntu')
         run: |
