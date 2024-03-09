@@ -1,0 +1,19 @@
+name: 'Allow MongoDB Atlas IP'
+description: 'Permit the runner to access a database in MongoDB Atlas'
+inputs:
+  atlas-public-key:
+    description: 'API public key'
+    required: true
+  atlas-private-key:
+    description: 'Corresponding private key'
+    required: true
+  group-id:
+    description: 'Unique 24-hexadecimal digit string that identifies the project'
+    required: true
+outputs:
+  ip-address:
+    description: 'The public IP address of the runner'
+runs:
+  using: 'node20'
+  main: 'main/index.js'
+  post: 'post/index.js'
