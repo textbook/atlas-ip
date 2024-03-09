@@ -4,6 +4,7 @@ name: Build and publish the action
 on:
   push:
     branches: [ main ]
+    tags: [ npm-v* ]
   pull_request:
     branches: [ main ]
 
