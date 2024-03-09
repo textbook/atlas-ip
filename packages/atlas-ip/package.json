@@ -1,6 +1,6 @@
 {
   "name": "@textbook/atlas-ip",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Permit IPs to access MongoDB Atlas",
   "publishConfig": {
     "access": "public",
