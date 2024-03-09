@@ -16,19 +16,20 @@ export async function getIp(): Promise<string> {
 	return body.trim();
 }
 
+/* eslint-disable @typescript-eslint/no-unsafe-argument -- spread of _array_ of any is safe */
 export const logger: Logger = {
-	debug(message?: any, ...optionalParams) {
+	debug(message?, ...optionalParams) {
 		if (isDebug()) {
 			debug(format(message, ...optionalParams));
 		}
 	},
-	error(message?: any, ...optionalParams) {
+	error(message?, ...optionalParams) {
 		error(format(message, ...optionalParams));
 	},
-	info(message?: any, ...optionalParams) {
+	info(message?, ...optionalParams) {
 		info(format(message, ...optionalParams));
 	},
-	warn(message?: any, ...optionalParams) {
+	warn(message?, ...optionalParams) {
 		warning(format(message, ...optionalParams));
-	}
+	},
 };

@@ -33,8 +33,8 @@ export default class Atlas {
 			method: "POST",
 		});
 		if (!res.ok) {
-			const body: any = await res.json();
-			const message = body?.detail ?? res.statusText;
+			const body: unknown = await res.json();
+			const message = getStringProperty(body, "detail") ?? res.statusText;
 			this.logger.error(message);
 			throw new Error(message);
 		}
@@ -49,8 +49,8 @@ export default class Atlas {
 			method: "DELETE",
 		});
 		if (!res.ok) {
-			const body: any = await res.json();
-			const message = body?.detail ?? res.statusText;
+			const body: unknown = await res.json();
+			const message = getStringProperty(body, "detail") ?? res.statusText;
 			this.logger.error(message);
 			throw new Error(message);
 		}
@@ -61,4 +61,11 @@ export default class Atlas {
 		datetime.setHours(datetime.getHours() + 6);
 		return datetime;
 	}
+}
+
+function getStringProperty(obj: unknown, name: string): string | null {
+	if (typeof obj === "object" && obj !== null && name in obj && typeof (obj as Record<string, unknown>)[name] === "string") {
+		return (obj as Record<string, string>)[name];
+	}
+	return null;
 }

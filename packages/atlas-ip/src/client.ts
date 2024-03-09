@@ -17,8 +17,8 @@ export default class DigestedClient implements Client {
 	constructor(private username: string, private password: string, private logger: Logger) {}
 
 	async fetch(input: string | URL | Request, init?: RequestInit): Promise<Response> {
-		const headers = (input as Request).headers ?? new Headers(init?.headers);
-		const method = (input as Request).method ?? init?.method?.toUpperCase() ?? "GET";
+		const headers = new Headers(init?.headers);
+		const method = init?.method?.toUpperCase() ?? (input instanceof Request ? input.method : "GET");
 		const url = this.getUrl(input);
 		this.logger.debug("making %s request to %s", method, url);
 		let res = await fetch(input, { ...init, headers });
@@ -38,7 +38,7 @@ export default class DigestedClient implements Client {
 		if (!wwwAuth.startsWith(DigestedClient.DIGEST_PREFIX)) {
 			throw new Error("invalid WWW-Authenticate header");
 		}
-		const { algorithm, domain, nonce, qop, realm} = this.extractParts(wwwAuth);
+		const { algorithm, nonce, qop, realm } = this.extractParts(wwwAuth);
 		if (algorithm !== "MD5") {
 			throw new Error(`unsupported algorithm ${algorithm}`);
 		}
@@ -62,7 +62,7 @@ export default class DigestedClient implements Client {
 		].join(", ")}`;
 	}
 
-	private extractParts(wwwAuth: string): { [key: string]: string } {
+	private extractParts(wwwAuth: string): Record<string, string> {
 		return Object.fromEntries(
 			wwwAuth
 				.slice(DigestedClient.DIGEST_PREFIX.length)
@@ -70,7 +70,7 @@ export default class DigestedClient implements Client {
 				.map((part) => {
 					const [name, value] = part.split("=");
 					if (value.startsWith('"') && value.endsWith('"')) {
-						return [name, value.slice(1, -1)]
+						return [name, value.slice(1, -1)];
 					}
 					return [name, value];
 				}),

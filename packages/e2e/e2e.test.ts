@@ -59,7 +59,9 @@ describe("@textbook/atlas-ip", () => {
 });
 
 function pretty(level: string) {
-	return (...args: any[]): void => console.log("%s : %s", level.padStart(5, " "), format(...args));
+	return (...args: unknown[]): void => {
+		console.log("%s : %s", level.padStart(5, " "), format(...args));
+	};
 }
 
 async function getIp(): Promise<string> {
