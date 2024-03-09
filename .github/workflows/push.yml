@@ -1,0 +1,63 @@
+---
+name: Build and publish the action
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npm --workspace packages/e2e run e2e
+        env:
+          ATLAS_GROUP_ID: ${{ secrets.ATLAS_GROUP_ID }}
+          ATLAS_PRIVATE_KEY: ${{ secrets.ATLAS_PRIVATE_KEY }}
+          ATLAS_PUBLIC_KEY: ${{ secrets.ATLAS_PUBLIC_KEY }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+      - run: cp -r .github packages/action/
+      - uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: action
+          path: |
+            packages/action/.github/**
+            packages/action/main/**
+            packages/action/post/**
+            packages/action/action.yml
+            packages/action/LICENSE
+            packages/action/package.json
+            packages/action/README.md
+  deploy:
+    needs: [ test ]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v1
+      - run: rm -rf *
+      - uses: actions/download-artifact@v4
+        with:
+          name: action
+      - run: |
+          git add .
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo 'No changes to commit'
+            exit 0
+          fi
+          git config --global user.name 'gh-actions'
+          git config --global user.email 'actions@github.com'
+          git commit --message 'Update atlas-ip action'
+          git push

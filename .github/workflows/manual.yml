@@ -1,0 +1,58 @@
+---
+name: Test manual steps in YAML/bash
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Get the public IP of the runner
+        id: get-ip
+        shell: bash
+        run: |
+          echo "ip-address=$(curl https://checkip.amazonaws.com)" >> "$GITHUB_OUTPUT"
+      - name: Permit the runner to access MongoDB Atlas
+        id: allow-ip
+        shell: bash
+        run: |
+          curl \
+             --data '[{"ipAddress": "${{ steps.get-ip.outputs.ip-address }}", "comment": "GitHub Actions Runner"}]' \
+             --digest \
+             --header 'Accept: application/vnd.atlas.2023-02-01+json' \
+             --header 'Content-Type: application/json' \
+             --user "$USERNAME:$PASSWORD" \
+             "https://cloud.mongodb.com/api/atlas/v2/groups/$GROUP_ID/accessList"
+        env:
+          GROUP_ID: ${{ secrets.ATLAS_GROUP_ID }}
+          PASSWORD: ${{ secrets.ATLAS_PRIVATE_KEY }}
+          USERNAME: ${{ secrets.ATLAS_PUBLIC_KEY }}
+      - name: Install mongosh
+        shell: bash
+        run: |
+          wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc
+          echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-mongosh-shared-openssl3
+          mongosh --version
+      - name: Test connection
+        shell: bash
+        run: |
+          mongosh --eval 'db.getCollectionNames()' "$MONGO_URL"
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+      - name: Revoke the runner's access to MongoDB Atlas
+        if: always() && steps.allow-ip.outcome == 'success'
+        shell: bash
+        run: |
+          curl \
+             --digest \
+             --header 'Accept: application/vnd.atlas.2023-02-01+json' \
+             --request 'DELETE' \
+             --user "$USERNAME:$PASSWORD" \
+             "https://cloud.mongodb.com/api/atlas/v2/groups/$GROUP_ID/accessList/${{ steps.get-ip.outputs.ip-address }}"
+        env:
+          GROUP_ID: ${{ secrets.ATLAS_GROUP_ID }}
+          PASSWORD: ${{ secrets.ATLAS_PRIVATE_KEY }}
+          USERNAME: ${{ secrets.ATLAS_PUBLIC_KEY }}
