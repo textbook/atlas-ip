@@ -16,8 +16,9 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - run: npm run build
       - run: npm run lint
-      - run: npm run e2e
+      - run: npm --workspace packages/e2e run e2e
         env:
           ATLAS_GROUP_ID: ${{ secrets.ATLAS_GROUP_ID }}
           ATLAS_PRIVATE_KEY: ${{ secrets.ATLAS_PRIVATE_KEY }}
