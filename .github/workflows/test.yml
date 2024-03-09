@@ -4,6 +4,7 @@ name: Test the action
 on:
   push:
     branches: [ v1 ]
+  workflow_call: {}
 
 jobs:
   test:
