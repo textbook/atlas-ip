@@ -4,7 +4,7 @@ import Atlas from "@textbook/atlas-ip";
 
 import { getCredentials, getIp, logger } from "./utils.js";
 
-const defaultComment = `${context.repo.owner}/${context.repo.repo} - ${context.job} - ${context.runId}`;
+const defaultComment = `${context.repo.owner}/${context.repo.repo} - ${context.job} - ${context.runId.toString(10)}`;
 
 const groupId = getInput("group-id", { required: true });
 const comment = getInput("comment") || defaultComment;

@@ -33,10 +33,10 @@
     "@codeyourfuture/eslint-config-standard": "^4.0.3",
     "@tsconfig/node20": "^20.1.2",
     "@types/node": "^20.11.25",
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@typescript-eslint/parser": "^7.1.1",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
     "cpy-cli": "^5.0.0",
     "eslint": "^8.57.0",
-    "typescript": "~5.3.3"
+    "typescript": "^5.4.3"
   }
 }
