@@ -2,25 +2,22 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { format } from "node:util";
 
-import Atlas from "@textbook/atlas-ip";
 import "dotenv/config";
-import { MongoClient } from "mongodb";
+import Atlas, { type Credentials, type Logger } from "@textbook/atlas-ip";
+import { MongoClient, type MongoClientOptions } from "mongodb";
 
-const connectionString = process.env.MONGO_URL;
+const connectionString = process.env.MONGO_URL!;
 
-/** @type {import("mongodb").MongoClientOptions} */
-const clientOptions = {
+const clientOptions: MongoClientOptions = {
 	serverSelectionTimeoutMS: 5_000,
 };
 
-/** @type {import("@textbook/atlas-ip").Credentials} */
-const credentials = {
-	publicKey: process.env.ATLAS_PUBLIC_KEY,
-	privateKey: process.env.ATLAS_PRIVATE_KEY,
+const credentials: Credentials = {
+	publicKey: process.env.ATLAS_PUBLIC_KEY!,
+	privateKey: process.env.ATLAS_PRIVATE_KEY!,
 };
 
-/** @type {import("@textbook/atlas-ip").Logger} */
-const logger = {
+const logger: Logger = {
 	debug: pretty("debug"),
 	error: pretty("error"),
 	info: pretty("info"),
@@ -28,8 +25,7 @@ const logger = {
 };
 
 describe("@textbook/atlas-ip", () => {
-	/** @type {MongoClient[]} */
-	let clients;
+	let clients: MongoClient[];
 
 	beforeEach(() => {
 		clients = [];
@@ -42,45 +38,38 @@ describe("@textbook/atlas-ip", () => {
 
 	it("can permit and revoke IP access", { timeout: 120_000 }, async () => {
 		const atlas = Atlas.create(credentials, logger);
-		const groupId = process.env.ATLAS_GROUP_ID;
+		const groupId = process.env.ATLAS_GROUP_ID!;
 		const ipAddress = await getIp();
 
 		await waitForResolution(() => {
-			const client = new MongoClient(connectionString, clientOptions);
-			clients.push(client);
-			return assert.rejects(client.connect(), "should initially fail to connect");
+			return assert.rejects(createClient().connect(), "should initially fail to connect");
 		});
 
 		await atlas.permit(groupId, ipAddress, `E2E testing @ ${new Date().toISOString()}`);
 		await waitForResolution(() => {
-			const client = new MongoClient(connectionString, clientOptions);
-			clients.push(client);
-			return client.connect();
+			return createClient().connect();
 		});
 
 		await atlas.revoke(groupId, ipAddress);
 		await waitForResolution(() => {
-			const client = new MongoClient(connectionString, clientOptions);
-			clients.push(client);
-			return assert.rejects(client.connect(), "should subsequently fail to connect");
+			return assert.rejects(createClient().connect(), "should subsequently fail to connect");
 		});
 	});
+
+	function createClient(): MongoClient {
+		const client = new MongoClient(connectionString, clientOptions);
+		clients.push(client);
+		return client;
+	}
 });
 
-/**
- * @param {string} level
- * @returns {(...args: unknown[]) => void}
- */
-function pretty(level) {
+function pretty(level: string): (...args: unknown[]) => void {
 	return (...args) => {
 		console.log("%s : %s", level.padStart(5, " "), format(...args));
 	};
 }
 
-/**
- * @returns {Promise<string>} - the current IP
- */
-async function getIp() {
+async function getIp(): Promise<string> {
 	const res = await fetch("https://checkip.amazonaws.com");
 	const body = await res.text();
 	return body.trim();
@@ -88,10 +77,8 @@ async function getIp() {
 
 /**
  * Create a promise that resolves after a timeout
- * @param {number} ms - number of milliseconds to wait
- * @returns {Promise<void>}
  */
-async function waitFor(ms) {
+async function waitFor(ms: number): Promise<void> {
 	await new Promise((resolve) => {
 		setTimeout(resolve, ms);
 	});
@@ -99,10 +86,8 @@ async function waitFor(ms) {
 
 /**
  * Repeat until the factory returns a promise that resolves.
- * @param {() => Promise<unknown>} factory
- * @returns {Promise<void>}
  */
-async function waitForResolution(factory) {
+async function waitForResolution(factory: () => Promise<unknown>): Promise<void> {
 	let delay = 500;
 	const loop = () => factory().catch(async () => {
 		logger.debug("waiting %dms", delay);

@@ -9,7 +9,7 @@
     "mongodb": "^6.5.0"
   },
   "scripts": {
-    "e2e": "node --test"
+    "e2e": "node --import ../../ts-node.js --test *.test.ts"
   },
   "keywords": [],
   "author": "Jonathan Sharpe <mail@jonrshar.pe>",
