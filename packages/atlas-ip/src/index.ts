@@ -9,7 +9,6 @@ export interface Credentials {
 export { Logger };
 
 export default class Atlas {
-
 	private static readonly BASE_URL = "https://cloud.mongodb.com/api/atlas/v2";
 
 	static create({ publicKey, privateKey }: Credentials, logger: Logger = console): Atlas {
@@ -27,7 +26,7 @@ export default class Atlas {
 		const res = await this.client.fetch(`${Atlas.BASE_URL}/groups/${groupId}/accessList`, {
 			body: JSON.stringify(payload),
 			headers: {
-				"Accept": "application/vnd.atlas.2023-02-01+json",
+				Accept: "application/vnd.atlas.2023-02-01+json",
 				"Content-Type": "application/json",
 			},
 			method: "POST",
@@ -44,7 +43,7 @@ export default class Atlas {
 		this.logger.info("revoking access from %s to %s", ipAddress, groupId);
 		const res = await this.client.fetch(`${Atlas.BASE_URL}/groups/${groupId}/accessList/${ipAddress}`, {
 			headers: {
-				"Accept": "application/vnd.atlas.2023-02-01+json",
+				Accept: "application/vnd.atlas.2023-02-01+json",
 			},
 			method: "DELETE",
 		});

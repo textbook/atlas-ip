@@ -7,7 +7,6 @@ export interface Client {
 }
 
 export default class DigestedClient implements Client {
-
 	private static readonly DIGEST_PREFIX = "Digest ";
 
 	static create(username: string, password: string, logger: Logger = console): DigestedClient {
@@ -32,7 +31,6 @@ export default class DigestedClient implements Client {
 		}
 		return res;
 	}
-
 
 	private createDigest(wwwAuth: string, method: string, uri: string): string {
 		if (!wwwAuth.startsWith(DigestedClient.DIGEST_PREFIX)) {
